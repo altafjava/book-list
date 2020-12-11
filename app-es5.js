@@ -21,13 +21,30 @@ UI.prototype.clearFields = function () {
   document.getElementById('author').value = '';
   document.getElementById('isbn').value = '';
 };
+UI.prototype.showAlert = function (message, className) {
+  const div = document.createElement('div');
+  div.className = `alert ${className}`;
+  div.appendChild(document.createTextNode(message));
+  const container = document.querySelector('.container');
+  const form = document.getElementById('book-form');
+  container.insertBefore(div, form);
+  setTimeout(function () {
+    div.remove();
+  }, 3000);
+};
 document.getElementById('book-form').addEventListener('submit', function (e) {
   e.preventDefault();
   const title = document.getElementById('title').value,
     author = document.getElementById('author').value,
     isbn = document.getElementById('isbn').value;
+
   const book = new Book(title, author, isbn);
   const ui = new UI(book);
-  ui.addBookToList(book);
-  ui.clearFields()
+  if (title === '' || author === '' || isbn === '') {
+    ui.showAlert('Please fill all the inputs', 'error');
+  } else {
+    ui.addBookToList(book);
+    ui.showAlert('Book added', 'success');
+    ui.clearFields();
+  }
 });
